@@ -7,12 +7,12 @@ This repo contains mostly test files for a part of a project i would like to mak
 I would like as part of that project to create VMs super fast like [digitalocean](https://www.digitalocean.com/) and a lot of others do  
 
 ## The Idea in steps?
-As prepreperation before someone can create faster a vm (only need to do this once for every os: debian, ubuntu, fedora)  
+### As prepreperation before someone can create faster a vm (only need to do this once for every os: debian, ubuntu, fedora)  
 - Create a virtual harddisk around 2gb depending on the OS and make sure it is resizeble  
 - Install the OS (not sure how to install something like ubuntu server without useing a screen)  
 - Mount the virtual harddisk to the server and change the settings inside the mounted folder (maybe using chroot)  
 - OR use ssh to get into the just created server  
-To fast create a vm  
+### To fast create a vm  
 - Copy the vm  
 - Mount *& chroot* into the system and change ip, swap, default pass, etc  
 - Open vm  
