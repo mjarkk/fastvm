@@ -1,9 +1,9 @@
 # fastvm
 A try for faster setting up virtual servers  
-Using [qemu](https://www.qemu.org/)  
+Using [qemu](https://www.qemu.org/) and [docker](https://www.docker.com/)  
 
 ## What?
-This repo contains mostly test files for a part of a project i would like to make  
+This repo contains mostly test files for a part of a project I would lfke to make  
 I would like as part of that project to create VMs super fast like [digitalocean](https://www.digitalocean.com/) and a lot of others do  
 
 ## The Idea in steps?
