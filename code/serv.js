@@ -8,4 +8,4 @@ app.get('/', (req, res) =>
   res.send('Hello World!')
 )
 
-app.listen(3303, () => console.log(`VastVM server running on port ${port}`))
+app.listen(conf.port, () => console.log(`VastVM server running on port ${conf.port}`))
