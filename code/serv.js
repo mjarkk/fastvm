@@ -1,6 +1,10 @@
 const express = require('express')
 const fs = require('fs-extra')
 const path = require('path')
+const sha1 = require('sha1')
+
+const funs = require('./imports/functions.js')
+
 const app = express()
 const conf = {
   port: 3303
@@ -8,35 +12,29 @@ const conf = {
 
 // get a list of availeble setup
 let imgs = []
-const getImgsList = callback => {
-  let cbStatus = typeof callback == 'function'
-  let cb = !cbStatus
-    ? (() => 0)
-    : callback
-  fs.readdir('./imgs/', (err, files) => 
-    !err
-      ? cb(imgs = files
-        .filter(el => el.indexOf('.') == -1)
-        .map(el => ({
-          path: `./imgs/${el}/inf.json`,
-          foldername: el
-        }))
-        .map(el => Object.assign({}, el, fs.readJsonSync(el.path)))
-        .filter(el => typeof el.name == 'string')
-        .map(el => Object.assign({}, el, {
-          working: fs.existsSync(path.resolve(__dirname, `./imgs/${el.foldername}/fastbuild.qcow2`))
-        })))
-      : cbStatus 
-        ? cb(false) 
-        : process.exit('the imgs folder does not exsist in ./code/')
-  )
-}
+let links = {}
+const getImgsList = cb => 
+  funs.getImgsList((_imgs, _links) => {
+    imgs = _imgs
+    links = _links
+    if (typeof cb == 'function') {
+      cb()
+    }
+  })
 getImgsList()
+
+// get image
+const img = id => 
+  (typeof id == 'number') 
+    ? imgs[id]
+    : imgs[links[id]]
+
 
 app.get('/', (req, res) => 
   res.json({
     status: true,
-    msg: 'Server is running, use /info/ to view availible OSes to setup or use'
+    msg: 'Server is running, use /info/ to view availible OSes to setup or use',
+    next: '/info'
   })
 )
 
@@ -46,5 +44,10 @@ app.get('/info/', (req, res) =>
     msg: imgs
   })
 )
+
+app.get('/make/:id', (req, res) => {
+  let data = img(req.params.id)
+  res.json(data)
+})
 
 app.listen(conf.port, () => console.log(`VastVM server running on port ${conf.port}`))
