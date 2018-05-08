@@ -1,0 +1,9 @@
+version: '2'
+services:
+    nodejs:
+        build: ./.
+        restart: always
+        ports:
+            - 3303:3303
+        volumes:
+            - ./code:/usr/src/app

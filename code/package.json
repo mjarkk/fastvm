@@ -1,0 +1,14 @@
+{
+  "name": "fastvm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/mjarkk/fastvm",
+  "author": "mjarkk <mkopenga@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "serve": "node serv.js"
+  },
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
