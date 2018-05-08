@@ -9,6 +9,7 @@
     "serve": "node serv.js"
   },
   "dependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "fs-extra": "^6.0.0"
   }
 }

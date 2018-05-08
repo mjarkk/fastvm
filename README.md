@@ -20,3 +20,14 @@ I would like as part of that project to create VMs super fast like [digitalocean
 - Working VM... (send ip, username, password, etc to the client)    
 And this all mostly in dockercontainers to make it more scalible and a easier to work with.  
 Also It would be nice to have a status stream to the web or a server for checking the status  
+
+
+## Setup production
+- Install [docker](https://docs.docker.com/install/) and [docker-compose](https://docs.docker.com/compose/install/)
+- `docker-compose up` and there you go :D
+
+## Manual setup without docker
+- Install [docker](https://docs.docker.com/install/), [docker-compose](https://docs.docker.com/compose/install/), [node.js](https://nodejs.org/en/), [qemu](https://www.qemu.org/)
+- `npm i -g yarn` *On linux you might need to add `sudo`*
+- `yarn`
+- `yarn serve`

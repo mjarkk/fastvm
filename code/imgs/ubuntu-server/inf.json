@@ -1,0 +1,5 @@
+{
+  "name": "Ubuntu Server",
+  "iso": "http://releases.ubuntu.com/18.04/ubuntu-18.04-live-server-amd64.iso",
+  "diskSize": "3G"
+}
