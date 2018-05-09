@@ -1,6 +1,8 @@
 const fs = require('fs-extra')
 const path = require('path')
 const sha1 = require('sha1')
+const request = require('request')
+const progress = require('request-progress')
 
 module.exports = {
   getImgsList(callback) {
@@ -40,5 +42,16 @@ module.exports = {
           ? end(false) 
           : process.exit('the imgs folder does not exsist in ./code/')
     )
+  },
+  downloadFile(url, to, callback, status) {
+    // url = <string> (the url to download)
+    // to = <string> (the write location)
+    // callback = <function(<object(error)> || <undefined>)> (when the request is dune)
+    // status = <function> (download status)
+    progress(request(url))
+    .on('progress', status)
+    .on('end', () => callback())
+    .on('error', callback)
+    .pipe(fs.createWriteStream(to))
   }
 }
