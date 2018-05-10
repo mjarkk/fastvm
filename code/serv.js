@@ -2,6 +2,7 @@ const express = require('express')
 const fs = require('fs-extra')
 const path = require('path')
 const sha1 = require('sha1')
+const randomstring = require('randomstring')
 const {exec, spawn} = require('child_process')
 
 const funs = require('./imports/functions.js')
@@ -43,9 +44,51 @@ app.get('/', (req, res) =>
 app.get('/info/', (req, res) => 
   res.json({
     status: true,
-    msg: imgs
+    todo: {
+      '/add/{id}/{size}': 'Create a VM fast (id = disk ID, size = disk size in GB)',
+      '/make/{id}': 'Setup or remake a boilerplate to later creat a vm fast'
+    },
+    oss: imgs
   })
 )
+
+app.get('/add/:id/:size', (req, res) => {
+  let startTime = new Date()
+  let endTime = undefined
+  let data = img(req.params.id)
+  let newSize = Number(req.params.size) + 'G'
+  let vmDisk = data.path + 'disk.qcow2'
+  let vmName = 'test' /*randomstring.generate()*/
+  let prepare = cb => 
+    fs.ensureDir('./vms/', cb)
+  let copy = cb => 
+    fs.copy(vmDisk, `./vms/${vmName}.qcow2`, cb)
+  let confFile = cb => 
+    fs.outputJson(`./vms/${vmName}.json`, {
+      name: vmName,
+      ram: '2G',
+      disk: newSize
+    }, cb)
+  let changeSize = cb => {
+    cb()
+  }
+  let run = cb => {
+    endTime = new Date();
+    cb()
+  }
+  let taskRunner = (toRun, i) => {
+    let task = toRun[i]
+    if (task) {
+      task(() => taskRunner(toRun, i + 1))
+    } else {
+      res.json({
+        status: true,
+        time: (Math.round((endTime - startTime) / 100) / 10) + 'S'
+      })
+    }
+  }
+  taskRunner([prepare, copy, confFile, changeSize, run], 0)
+})
 
 app.get('/make/:id', (req, res) => {
   let data = img(req.params.id)
@@ -88,8 +131,7 @@ app.get('/make/:id', (req, res) => {
       '-boot','order=d',
       '-drive','file=' + vmDisk + ',format=qcow2',
       '-m','2G',
-      '-cdrom',vmIso,
-      '-net','nic'
+      '-cdrom',vmIso
     ]
     const vm = spawn('qemu-system-x86_64', startScript)
     vm.stdout.on('data', data => {

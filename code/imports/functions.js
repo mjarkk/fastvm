@@ -25,16 +25,16 @@ module.exports = {
           .map(el => Object.assign({}, el, fs.readJsonSync(el.path + 'inf.json')))
           .filter(el => typeof el.name == 'string') // filter out bad folders
           .map(el => Object.assign({}, el, {
-            working: fs.existsSync(el.path + 'fastbuild.qcow2')
+            working: fs.existsSync(el.path + 'disk.qcow2')
           }))
           .map((el, id) => {
             links[el.id] = id
             return Object.assign({}, el, {
               next: el.working 
-                ? `/add/${el.id}/` 
+                ? `/add/${el.id}/{size}/` 
                 : `/make/${el.id}/`,
               whatIsNextUp: el.working 
-                ? `Add a vm working new vm` 
+                ? `Add a vm working new vm {size} = the size of the vm in GB` 
                 : `Build this OS to later add VMs faster` 
             })
           }))
