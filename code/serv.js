@@ -41,7 +41,7 @@ app.get('/', (req, res) =>
   })
 )
 
-app.get('/info/', (req, res) => 
+app.get('/info/', (req, res) =>
   res.json({
     status: true,
     todo: {
@@ -59,21 +59,42 @@ app.get('/add/:id/:size', (req, res) => {
   let newSize = Number(req.params.size) + 'G'
   let vmDisk = data.path + 'disk.qcow2'
   let vmName = 'test' /*randomstring.generate()*/
+  let newVm = {
+    disk: `./vms/${vmName}.qcow2`,
+    config: `./vms/${vmName}.json`
+  }
   let prepare = cb => 
     fs.ensureDir('./vms/', cb)
   let copy = cb => 
-    fs.copy(vmDisk, `./vms/${vmName}.qcow2`, cb)
+    fs.copy(vmDisk, newVm.disk, cb)
   let confFile = cb => 
-    fs.outputJson(`./vms/${vmName}.json`, {
+    fs.outputJson(newVm.config, {
       name: vmName,
       ram: '2G',
       disk: newSize
     }, cb)
   let changeSize = cb => {
-    cb()
+    exec(`qemu-img resize ${newVm.disk} ${newSize}`, cb)
   }
   let run = cb => {
-    endTime = new Date();
+    let startScript = [
+      '-drive','file=' + newVm.disk + ',format=qcow2',
+      '-m','2G'
+    ]
+    const vm = spawn('qemu-system-x86_64', startScript)
+    vm.stdout.on('data', data => {
+      log(`stdout: ${data}`)
+    })
+    vm.stderr.on('data', data => {
+      log(`stderr: ${data}`)
+    })
+    vm.on('close', code => {
+      log(`child process exited with code ${code}`)
+      cb()
+    })
+  }
+  let finallize = cb => {
+    endTime = new Date()
     cb()
   }
   let taskRunner = (toRun, i) => {
@@ -87,7 +108,7 @@ app.get('/add/:id/:size', (req, res) => {
       })
     }
   }
-  taskRunner([prepare, copy, confFile, changeSize, run], 0)
+  taskRunner([prepare, copy, confFile, changeSize, run, finallize], 0)
 })
 
 app.get('/make/:id', (req, res) => {

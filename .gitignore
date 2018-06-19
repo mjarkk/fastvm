@@ -60,3 +60,4 @@ typings/
 # added myself
 *.qcow2
 *.iso
+code/vms/*

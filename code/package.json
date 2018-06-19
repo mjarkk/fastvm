@@ -15,5 +15,8 @@
     "request": "^2.85.0",
     "request-progress": "^3.0.0",
     "sha1": "^1.1.1"
+  },
+  "nodemonConfig": {
+    "ignore": ["imgs/**/*", "vms/**/*"]
   }
 }
